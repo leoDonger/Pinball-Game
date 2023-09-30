@@ -1,11 +1,8 @@
-// import processing.sound.*;
 import ddf.minim.*;
 Minim minim;
 AudioSample sound;
 AudioPlayer bkm;
 
-// SoundFile sound;
-// SoundFile bkm;
 int startTime;
 
 PImage img;
@@ -20,46 +17,35 @@ float sphereRadius = 55;
 float sphereRadius2 = 30;
 float sphereMass = Float.MAX_VALUE;
 Circle obstacle = new Circle(spherePos, sphereRadius);
-// ParticleSystem ps = new ParticleSystem(new Vec2(445, 600));
 // range: 30 - 860
 
 Circle[] ballObstacle = new Circle[]{
-  new Circle(new Vec2(483, 95), 50, new Vec2(0, 0)),
-  new Circle(new Vec2(331, 145), 45, new Vec2(0, 0)),
-  new Circle(new Vec2(635, 145), 45, new Vec2(0, 0)),
+  new Circle(new Vec2(483, 95), 50, new Vec2(10, 10)),
+  new Circle(new Vec2(331, 145), 45, new Vec2(10, 10)),
+  new Circle(new Vec2(635, 145), 45, new Vec2(10, 10)),
 
-  // new Circle(new Vec2(375, 460), 25, new Vec2(0, 0)),
-  // new Circle(new Vec2(483, 425), 24, new Vec2(0, 0)),
-  new Circle(new Vec2(483, 305), 24, new Vec2(0, 0)),
+  new Circle(new Vec2(483, 305), 24, new Vec2(10, 10)),
 
-  new Circle(new Vec2(800, 370), 40, new Vec2(0, 0)),
-  new Circle(new Vec2(415+30+100, 370), 25, new Vec2(0, 0)),
-  new Circle(new Vec2(415, 370), 25, new Vec2(0, 0)),
-  new Circle(new Vec2(165, 370), 40, new Vec2(0, 0)),
+  new Circle(new Vec2(800, 370), 40, new Vec2(10, 10)),
+  new Circle(new Vec2(415+30+100, 370), 25, new Vec2(10, 10)),
+  new Circle(new Vec2(415, 370), 25, new Vec2(10, 10)),
+  new Circle(new Vec2(165, 370), 40, new Vec2(10, 10)),
 
-
-  // new Circle(new Vec2(415+30, 650), 55, new Vec2(0, 0)),
-  // new Circle(new Vec2(415+30, 250), 15, new Vec2(0, 0)),
-  // new Circle(new Vec2(480, 460), 25, new Vec2(0, 0)),
-  // new Circle(new Vec2(415+30-100, 300), 15, new Vec2(0, 0)),
-  // new Circle(new Vec2(415+30-100, 400), 15, new Vec2(0, 0)),
   };
 
-Circle bigBall = new Circle(new Vec2(484, 550), 90, new Vec2(0, 0));
+Circle bigBall = new Circle(new Vec2(484, 550), 90, new Vec2(20, 20));
 
 
 Line[] lineObstacles = new Line[]{
   new Line(new Vec2(115, 40), new Vec2(115, 839)), 
   new Line(new Vec2(115, 40), new Vec2(847, 40)), 
   new Line(new Vec2(847, 40), new Vec2(847, 437)),
-  new Line(new Vec2(930, 540), new Vec2(847, 437)),
-  new Line(new Vec2(930, 540), new Vec2(930, 1000)),
+  new Line(new Vec2(925, 540), new Vec2(847, 437)),
+  new Line(new Vec2(925, 540), new Vec2(925, 1000)),
 
   new Line(new Vec2(890, 550), new Vec2(890, 1000)),
   new Line(new Vec2(890, 550),new Vec2(847, 550)),
   new Line(new Vec2(847, 550), new Vec2(847, 839)),
-  // new Line(new Vec2(0, 1000), new Vec2(860, 1060)),
-  // new Line(new Vec2(860, 1060), new Vec2(960, 1060)),
 };
 
 Line[] lineObstacles2 = new Line[]{
@@ -110,20 +96,15 @@ Line[] triangleObstacles2 = new Line[]{
   new Line(new Vec2(492, 935),  new Vec2(757-160*cos(radians(39.6)), 760+160*sin(radians(39.6)))),
   new Line(new Vec2(495, 950), new Vec2(800-160*cos(radians(44)), 805+160*sin(radians(44)))), 
   new Line(new Vec2(492, 935), new Vec2(495, 950)),
-  // new Line(new Vec2(440, 985),  new Vec2(203-160*cos(radians(39.6)), 760+160*sin(radians(39.6)))),
-  // new Line(new Vec2(440, 985), new Vec2(160-160*cos(radians(44)), 805+160*sin(radians(44)))), 
   };
 
 
 Vec2 offset1 = new Vec2(165*cos(radians(20)), 165*sin(radians(20)));
 Vec2 offset2 = new Vec2(-165*cos(radians(20)), 165*sin(radians(20)));
-// Line[] flippers = new Line[]{
-//   new Line(lineObstacles2[0].pt2, lineObstacles2[0].pt2.plus(offset1)),
-//   new Line(lineObstacles2[1].pt2, lineObstacles2[1].pt2.plus(offset2))
-// };
+
 Line[] flippers = new Line[]{};
 
-Box launcher = new Box(new Vec2(910, 855), 40, 25);
+Box launcher = new Box(new Vec2(907, 850), 37, 25);
 
 Box[] exitBox = new Box[]{new Box(
   new Vec2(450+30, 860),
@@ -163,31 +144,20 @@ void setup(){
   sound = minim.loadSample("sunflower-street-drumloop-85bpm-163900.mp3", 512);
   bkm = minim.loadFile("8bit-music-for-game-68698.mp3");
   bkm.loop();
-  // ball.resize(30, 30);
-  // sound = new SoundFile(this, "sunflower-street-drumloop-85bpm-163900.mp3");
-  // bkm = new SoundFile(this, "8bit-music-for-game-68698.mp3");
+
   surface.setTitle("Pinball simulation");
   strokeWeight(2); //Draw thicker lines 
 }
 
 // range: 30 - 860
-Vec2 obstacleVel = new Vec2(0,0);
-
 void update(float dt){
-  obstacle.mass = sphereMass;
-
   float toGen_float = genRate * dt;
   int toGen = int(toGen_float);
   float fractPart = toGen_float - toGen;
   if (random(1) < fractPart) toGen += 1;
   for (int i = 0; i < toGen; i++){
     if (numParticles >= maxParticles) break;
-    // pos[numParticles] = new Vec2(20+random(600),random(20));
-    // vel[numParticles] = new Vec2(0,-10000+random(10));
-    lifeList[numParticles] = 0;
-    colList[numParticles] = new Col(255, 0, 0);
     pss[numParticles] = new ParticleSystem(new Vec2(445, 600));
-    //vel[numParticles] = new Vec2(60,-200); 
 
     Vec2 temp_vel = new Vec2(0,0);
     pinballs[numParticles] = new Circle(new Vec2(905.5,780-numParticles*r*2), r-2);
@@ -196,22 +166,9 @@ void update(float dt){
     numParticles += 1;
   }
   
-
-  obstacleVel = new Vec2(0,0);
-  if (leftPressed) obstacleVel = obstacleVel.plus(new Vec2(-obstacleSpeed,0));
-  if (rightPressed) obstacleVel = obstacleVel.plus(new Vec2(obstacleSpeed,0));
-  if (upPressed) obstacleVel = obstacleVel.plus(new Vec2(0,-obstacleSpeed));
-  if (downPressed) obstacleVel = obstacleVel.plus(new Vec2(0,obstacleSpeed));
-  if (upPressed) launch();
-  obstacleVel.clampToLength(obstacleSpeed);
-  if (shiftPressed) obstacleVel = obstacleVel.times(2);
-  obstacle.vel = obstacleVel;
-  obstacle.center.add(obstacleVel.times(dt));
-  
   for (int i = 0; i <  numParticles; i++){
     Vec2 acc = gravity; //Gravity
     lifeList[i] += dt;
-    // colList[i].g = lifeList[i]/maxLife;
 
     pinballs[i].vel.add(acc.times(dt));
     pinballs[i].center.add(pinballs[i].vel.times(dt)); 
@@ -280,25 +237,16 @@ void collisionResponseStatic(Circle ball1, Circle ball2, float cor, boolean elas
     Vec2 velNormal = normal.times(dot(ball1.vel,normal));
     ball1.vel.subtract(velNormal.times(1 + cor));
   }
-  // ball1.center.add(ball1.vel.times(dt)); 
-  // ball2.center.add(ball2.vel.times(dt));
 }
 
 void collisionResponseStatic(Circle ball, Line line, float cor){
-  // ball.center.subtract(ball.vel.times(dt)); 
   Vec2 v1 = ball.center.minus(line.pt1);
   Vec2 v2 = line.pt2.minus(line.pt1);
   float proj = dot(v2, v1) / v2.length();
   Vec2 closest = line.pt1.plus(v2.normalized().times(proj));
-  // ball.center = closest;
   Vec2 dist = ball.center.minus(closest);
-  // println("closest:", closest.x, closest.y);
-  // println("center:", ball.center.x, ball.center.y);
-  // if (dist.length() < ball.radius){
 
-    // ball.center.add(dist.normalized().times((abs(ball.radius-dist.length())+5)*1.01));
   Vec2 normal = new Vec2(-v2.y, v2.x).normalized();
-  // if (dot(normal, v2) != 0) println("error"); 
 
   float d = dot(normal, dist);
   if (d < 0){
@@ -324,8 +272,8 @@ void obstacleCollision(Circle[] pinballs){
     for(int j = 0; j <ballObstacle.length; j++){
       if (colliding(pinballs[i], ballObstacle[j])){
         collisionResponseStatic(pinballs[i], ballObstacle[j], COR, false);
-        score+=100;
-          sound.trigger();
+        score+=50;
+        sound.trigger();
         startTime = millis();
       }
     }
@@ -333,7 +281,6 @@ void obstacleCollision(Circle[] pinballs){
       sound.stop();
     }
     for(int j = 0; j <lineObstacles.length; j++){
-      //Line path = new Line(pinballs[i].center, pinballs[i].center.miuns(pinballs[i].vel.times(dt)));
       //if (colliding(path, lineObstacles[j])){
        if (colliding(lineObstacles[j], pinballs[i])){
       collisionResponseStatic(pinballs[i], lineObstacles[j], COR);
@@ -353,9 +300,6 @@ void obstacleCollision(Circle[] pinballs){
     for(int j = 0; j <triangleObstacles.length; j++){
       if (colliding(triangleObstacles[j], pinballs[i])){
         collisionResponseStatic(pinballs[i], triangleObstacles[j], COR);
-          sound.trigger();
-          startTime = millis();
-        score+=100;
       }
     }
     
@@ -384,32 +328,25 @@ void obstacleCollision(Circle[] pinballs){
 }
 
 
-boolean leftPressed, rightPressed, upPressed, downPressed, shiftPressed;
 void keyPressed(){
-  if (keyCode == LEFT) leftPressed = true;
-  if (keyCode == RIGHT) rightPressed = true;
   if (keyCode == UP) launch(); 
-  if (keyCode == DOWN) downPressed = true;
-  if (keyCode == SHIFT) shiftPressed = true;
   if (key == ' ') paused = !paused;
 }
 
 void keyReleased(){
   if (key == 'r'){
     println("Reseting the System");
+    score = 0;
     numParticles = 0;
   }
-  if (keyCode == LEFT) leftPressed = false;
-  if (keyCode == RIGHT) rightPressed = false;
   if (keyCode == UP) unlaunch(); 
-  if (keyCode == DOWN) downPressed = false;
-  if (keyCode == SHIFT) shiftPressed = false;
 }
 
 
 void launch(){
   int length = min(pinballs.length, numParticles);
-  int count = 1;
+  boolean single = true;
+  // int count = 1;
   int index = -1;
   for(int i = 0; i < length-1; i++){
     for(int j = i+1; j < length; j++){
@@ -424,15 +361,19 @@ void launch(){
       index = i;
       for(int j = 0; j < length; j++){
         if (i!=j){
-          if (colliding(pinballs[i], pinballs[j])){
-            count++;
+          if (!colliding(pinballs[i], pinballs[j])){
+            single = false;
           }
         }
       }
     }
   }
   if (index!=-1){
-    pinballs[index].vel.add(new Vec2(0, -1000*count));
+    if (single){
+      pinballs[index].vel.add(new Vec2(0, -1500));
+    }else{
+      pinballs[index].vel.add(new Vec2(0, -3000));
+    }
   }
   launcher.pos.subtract(new Vec2(0, launcher.half_height));
 }
@@ -446,43 +387,39 @@ boolean paused = true;
 void draw(){
   if (!paused) update(0.8/frameRate);
 
-
-  // if (!bkm.isPlaying() )
-  // {
-  //       bkm.rewind();
-  //   bkm.trigger();
-  // }
-
   // background(255); //White background
   background(img); 
-  stroke(0,0,0);
+  // stroke(0,0,0);
+  stroke(0);
   //fill(0,0,255);
   for (int i = 0; i < numParticles; i++){
-    // fill(colList[i].r, colList[i].g, colList[i].b);
-    fill(43, 78, 191);
+    fill(64, 64, 64);
     Circle circle = pinballs[i];
     circle(circle.center.x, circle.center.y, circle.radius*2);
-    // circle(pos[i].x, pos[i].y, r*2); //(x, y, diameter)
   }
   
   fill(0, 220, 255);
   for (int i = 0; i<ballObstacle.length; i++){
     // ballObstacle[i].draw();
-
-    beginShape();
-    noStroke();
-    texture(ball);
-    vertex(ballObstacle[i].center.x-ballObstacle[i].radius, ballObstacle[i].center.y-ballObstacle[i].radius, 0, 0);
-    vertex(ballObstacle[i].center.x+ballObstacle[i].radius, ballObstacle[i].center.y-ballObstacle[i].radius, ball.width, 0);
-    vertex(ballObstacle[i].center.x+ballObstacle[i].radius, ballObstacle[i].center.y+ballObstacle[i].radius, ball.width, ball.height);
-    vertex(ballObstacle[i].center.x-ballObstacle[i].radius, ballObstacle[i].center.y+ballObstacle[i].radius, 0, ball.height);
-    stroke(4);
-    endShape(CLOSE);
+  noStroke();
+  fill(255, 255, 255, 0);
+  ballObstacle[i].draw();
+  bigBall.draw();
+  // stroke(4);
+    // beginShape();
+    // noStroke();
+    // texture(ball);
+    // vertex(ballObstacle[i].center.x-ballObstacle[i].radius, ballObstacle[i].center.y-ballObstacle[i].radius, 0, 0);
+    // vertex(ballObstacle[i].center.x+ballObstacle[i].radius, ballObstacle[i].center.y-ballObstacle[i].radius, ball.width, 0);
+    // vertex(ballObstacle[i].center.x+ballObstacle[i].radius, ballObstacle[i].center.y+ballObstacle[i].radius, ball.width, ball.height);
+    // vertex(ballObstacle[i].center.x-ballObstacle[i].radius, ballObstacle[i].center.y+ballObstacle[i].radius, 0, ball.height);
+    // stroke(4);
+    // endShape(CLOSE);
   }
   noStroke();
   fill(255, 255, 255, 0);
   bigBall.draw();
-  stroke(4);
+  // stroke(4);
   // beginShape();
   // noStroke();
   // texture(bigball);
@@ -498,31 +435,36 @@ void draw(){
   // }
 
   for (int i =0; i<lineObstacles.length; i++){
-    lineObstacles[i].draw(255, 255, 255);
+    // lineObstacles[i].draw(255, 255, 255);
+    lineObstacles[i].draw();
   }
 
   for (int i =0; i<lineObstacles2.length; i++){
-    lineObstacles2[i].draw(255, 255, 255);
+    lineObstacles2[i].draw();
+    // lineObstacles2[i].draw(255, 255, 255);
   }
 
-  for (int i =0; i<flippers.length; i++){
-    flippers[i].draw(255, 0, 0);
-  }
+  // for (int i =0; i<flippers.length; i++){
+  //   flippers[i].draw(255, 0, 0);
+  //   flippers[i].draw(255, 0, 0);
+  // }
 
   for (int i =0; i<triangleObstacles.length; i++){
-    triangleObstacles[i].draw(255, 255, 255);
+    triangleObstacles[i].draw();
+    // triangleObstacles[i].draw(255, 255, 255);
   }
 
   for (int i =0; i<triangleObstacles2.length; i++){
-    triangleObstacles2[i].draw(255, 255, 255);
+    triangleObstacles2[i].draw();
+    // triangleObstacles2[i].draw(255, 255, 255);
   }
 
   for (int i =0; i<exitBox.length; i++){
-    fill(100, 100, 250, 127);
-    noStroke();
+    // fill(100, 100, 250, 127);
+    // noStroke();
     exitBox[i].draw();
-    stroke(4);
-    fill(0,0,0);
+    // stroke(4);
+    // fill(0,0,0);
   }
 
   fill(255, 255, 255, 100);
