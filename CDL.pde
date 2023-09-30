@@ -583,7 +583,7 @@ public class Particle{
   }
 
   public void draw() {
-    stroke(255, lifespan);
+    // stroke(255, lifespan);
     fill(250, 100, 100, lifespan);
     circle(pos.x, pos.y, 2.5*2);
   }
