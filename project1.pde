@@ -139,18 +139,22 @@ void setup(){
   bigball = loadImage("texture\\bigball.jpg");
   size(960,1080, P2D);
   img.resize(width, height);
-
   minim = new Minim(this);
   sound = minim.loadSample("sunflower-street-drumloop-85bpm-163900.mp3", 512);
   bkm = minim.loadFile("8bit-music-for-game-68698.mp3");
   bkm.loop();
-
+  bkm.pause();
   surface.setTitle("Pinball simulation");
   strokeWeight(2); //Draw thicker lines 
 }
 
 // range: 30 - 860
 void update(float dt){
+  if(paused){
+    bkm.pause();
+  }
+  bkm.play();
+  
   float toGen_float = genRate * dt;
   int toGen = int(toGen_float);
   float fractPart = toGen_float - toGen;
@@ -471,7 +475,7 @@ void draw(){
   launcher.draw();
 
   fill(0, 125, 250);
-  rect(50, 970, 170, 70);
+  rect(50, 970, 170, 80);
 
   fill(0);
   textSize(40);
